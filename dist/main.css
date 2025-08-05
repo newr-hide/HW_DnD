@@ -107,9 +107,20 @@
     height: 100%;
 }
 
-.dragged {
+.task.dragged {
     position: absolute;
     z-index: 1000;
+    height: 40px;
+    min-width: 522px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-top: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid;
+    border-color: #90a0a8;
+    background-color: #ffffff;
     
 }
 .task {
@@ -141,3 +152,17 @@
 .title_container {
     margin: 0;
 }
+
+.placeholder {
+    height: 40px; 
+    background-color: #fafafa; 
+    border-bottom: 2px dashed #ccc; 
+    transition: all .2s ease-in-out; 
+}
+
+.dragging-over {
+    position: relative;
+    z-index: 10;
+}
+
+

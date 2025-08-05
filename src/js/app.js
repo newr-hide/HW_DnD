@@ -35,7 +35,9 @@ const columns = document.querySelectorAll(('.column_container')).forEach(column 
 
         let newTaskItem = document.createElement('div');
         newTaskItem.classList.add('task');
+
         newTaskItem.textContent = value;
+        // newTaskItem.draggable = true;
 
         // Кнопка на задаче
         let btnRemoveTask = document.createElement('button');
@@ -94,139 +96,106 @@ myForm.addEventListener('submit', function(event) {
     event.preventDefault(); 
 });
 
+
+
 // DnD
 
-const tasksElements = tasks.querySelectorAll('.task');
-let actualElement;
 
-const onMouseOver = (e) => {
-    
-    
-    actualElement.style.top = e.clientY +'px';
-    actualElement.style.left = e.clientX + 'px';
-};
-
-const onMouseUp = (e) => {
-    const mouseUpItem = e.target;
-    console.log(mouseUpItem)
-    console.log(actualElement)
-    tasks.insertBefore(actualElement, mouseUpItem.firstElementChild)
-    actualElement.classList.remove('dragged');
-    actualElement = undefined;
-
-    document.documentElement.removeEventListener('mouseup', onMouseUp);
-    document.documentElement.removeEventListener('mouseover', onMouseOver);
-};
+// const taskElement = tasks.querySelector('.task');
+// let draggedElement;
+// let initialOffsetX, initialOffsetY; 
 
 
-
-tasks.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    actualElement = e.target;
-    actualElement.style.cursor = 'grabbing';
-    actualElement.classList.add('dragged');
-    document.documentElement.addEventListener('mouseup', onMouseUp);
-    document.documentElement.addEventListener('mouseover', onMouseOver);
-
-
-});
-
-
-
-});
-
-
-
-
-
-
-// import { mdConvert } from 'md-converter';
-
-// const fileContainer = document.querySelector('.file-container');
-// const fileInput = fileContainer.querySelector('.overlapped');
-// const fileTitle = document.querySelector('.prewiew-title');
-// const fileText = document.querySelector('.prewiew-text');
-// const fileHtml = document.querySelector('.prewiew-html');
-// const fileImage = document.querySelector('.prewiew-image');
-
-// fileContainer.addEventListener('click', (e)=>{
+// const onMouseMove = (e) => {
+//     if (!draggedElement) return;
    
-//     fileInput.dispatchEvent(new MouseEvent('click'))
-// });
-
-// fileContainer.addEventListener('dragover', (e) => {
-//     e.preventDefault();
-// });
-
-// fileContainer.addEventListener('drop', (e) => {
-//     e.preventDefault();
-//     console.log(e)
-//     fileImage.src = 
-// });
-
-// const displayTextContent = (e) => {
-//      console.log(e)
-//      fileText.textContent = e.target.result;
-// }
-
-// const displayMdContent = (e) => {
-//      console.log(e)
-//      fileHtml.innerHTML = mdConvert(e.target.result);
-// }
-
-// const displayImage = (e) => {
-//      console.log(e)
-//      fileImage.src = e.target.result;
-// }
-
-// fileInput.addEventListener('change', (e) => {
-//     console.log(e);
-//     console.dir(fileInput)
-
-//     const file = fileInput.files && fileInput.files[0];
-//     if (!file) return;
-//     fileTitle.textContent = file.name;
-
-//     const url = URL.createObjectURL(file);
-//     console.log(url)
-
-//     const link = document.createElement('a');
-//     link.href = url;
-//     link.rel = 'noopener';
-//     link.download = file.name;
-//     link.click();
-
-// });
-
-// const items = document.querySelector('.items');
-// const itemsElement = items.querySelector('.items-item');
-// let actualElement;
-
-// const onMouseOver = (event) => {
-    
-//     actualElement.style.top = event.clientY +'px';
-//     actualElement.style.left = event.clientX +'px';
+//     const newTop = e.clientY - initialOffsetY;
+//     const newLeft = e.clientX - initialOffsetX;
+//     draggedElement.style.top = `${newTop}px`;
+//     draggedElement.style.left = `${newLeft}px`;
 // };
 
+
 // const onMouseUp = (e) => {
-//     const mouseUpTem = e.target;
-//     items.insertBefore(actualElement, mouseUpTem)
+//     mouseUrItem = e.target;
+//     console.log(draggedElement)
+//     tasks.insertBefore(draggedElement, mouseUrItem);
+//     draggedElement.classList.remove('dragged');
+//     draggedElement = undefined;
 
 
-// actualElement.classList.remove('dragged');
-// actualElement = undefined;
-
-// document.documentElement.removeEventListener('mouseup', onMouseUp);
-// document.documentElement.removeEventListener('mouseover', onMouseOver)
-// }
+//     document.documentElement.removeEventListener('mousemove', onMouseMove);
+//     document.documentElement.removeEventListener('mouseup', onMouseUp);
+// };
 
 
+// tasks.addEventListener('mousedown', (event) => {
+//     event.preventDefault();
+//     draggedElement = event.target.closest('.task');
+    
+//     if (!draggedElement) return;
 
-// items.addEventListener('mousedown', (e) => {
-//     e.preventDefault();
-//      actualElement = e.target;
-//     actualElement.classList.add('dragged');
 
+//     const rect = draggedElement.getBoundingClientRect();
+//     initialOffsetX = event.clientX - rect.left;
+//     initialOffsetY = event.clientY - rect.top;
+
+//     draggedElement.classList.add('dragged');
+
+
+//     document.documentElement.addEventListener('mousemove', onMouseMove);
 //     document.documentElement.addEventListener('mouseup', onMouseUp);
-//     document.documentElement.addEventListener('mouseover', onMouseOver)
 // });
+
+// })
+
+
+
+
+        
+
+
+
+// document.querySelectorAll('.column_container').forEach((col) => {
+    column.addEventListener('dragstart', (event) => {
+        event.dataTransfer.setData("text/plain", event.target.outerHTML);
+        // console.log(event.target);
+        event.dataTransfer.effectAllowed = 'move';
+        originalElement = event.target;
+        
+    });
+
+    let placeholder = document.createElement('div');
+    placeholder.classList.add('placeholder');
+
+    tasks.addEventListener('dragenter', () => {
+        tasks.insertBefore(placeholder, null);
+    });
+
+    tasks.addEventListener('dragleave', () => {
+        
+        placeholder.parentNode?.removeChild(placeholder);
+    });
+
+
+
+    tasks.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+
+    });
+
+    tasks.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const draggedElHTML = e.dataTransfer.getData('text');
+        const draggedEl = document.createElement('div');
+        draggedEl.innerHTML = draggedElHTML;
+        if (originalElement && originalElement.parentNode.contains(originalElement)) {
+            originalElement.parentNode.removeChild(originalElement);
+        }
+
+    tasks.insertAdjacentElement('beforeend', draggedEl);
+
+    originalElement = null;
+    })})

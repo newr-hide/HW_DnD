@@ -121,6 +121,7 @@
     border: 1px solid;
     border-color: #90a0a8;
     background-color: #ffffff;
+    opacity: 0.5;
     
 }
 .task {
@@ -136,6 +137,20 @@
     border: 1px solid;
     border-color: #90a0a8;
     background-color: #ffffff;
+}
+
+.fantom {
+    height: 40px;
+    min-width: 215px;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-top: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid;
+    border-color: #90a0a8;
+    background-color: #ccc;
 }
 
 .hidden {

@@ -99,78 +99,116 @@ myForm.addEventListener('submit', function(event) {
 
 
 // DnD
-
-
+let shift;
+let fantomElement;
 let draggedElement;
-let initialOffsetX, initialOffsetY; 
+let padding = 10;
 
 const onMouseMove = (e) => {
-    tasks.insertBefore(fantomElement,e.target)
-    let x = e.clientX;
-    let y = e.clientY;
-    draggedElement.style.pointerEvents = 'none';
-    
-    let elementUnderCursor = document.elementFromPoint(x, y);
-    console.log(`Контент элемента: ${elementUnderCursor.innerHTML}`);
-    
+    const targetTask = e.target.closest(".task");
     if (!draggedElement) return;
+
+    if(!(e.target instanceof HTMLElement)) 
+        return;
+
+    draggedElement.style.left = e.pageX - shift.x + "px";
+    draggedElement.style.top = e.pageY - shift.y + "px";
+
+    if (!targetTask && !e.target.classList.contains("tasks_container")) {
+        return;
+      }
+
+      if (e.target.classList.contains("tasks_container")) {
+       
+        const arrTasks = Array.from(e.target.children).filter(
+          (task) =>
+            !task.classList.contains("dragged") &&
+            !task.classList.contains("fantom"),
+        );  
+        
+        if (arrTasks.length === 0) {
+            fantomElement.remove();
+            e.target.append(fantomElement);
+            
+          } else {
+            
+            if (
+              e.clientY - padding >
+              arrTasks[arrTasks.length - 1].offsetTop +
+                arrTasks[arrTasks.length - 1].offsetHeight
+            ) {
+              
+            if (
+                !e.target.children[e.target.children.length - 1].classList.contains(
+                  "fantom",
+                )
+              ) {
+                fantomElement.remove();
+                e.target.append(fantomElement);
+              }
+            }
+           
+          }
+        }
     
-   
-    const newTop = e.clientY - initialOffsetY;
-    const newLeft = e.clientX - initialOffsetX;
-    draggedElement.style.top = `${newTop}px`;
-    draggedElement.style.left = `${newLeft}px`;
+        
+          if (targetTask) {
+          
+          const locationUp = positionUp(
+            targetTask.offsetTop,
+            targetTask.offsetHeight,
+            e.clientY - padding,
+          );
+    
+          if (locationUp &&
+            e.target.previousElementSibling &&
+            e.target.previousElementSibling.classList.contains("fantom")
+          ) {
+            return;
+          }
+    
+          if (
+            !locationUp &&
+            e.target.nextElementSibling &&
+            e.target.nextElementSibling.classList.contains("fantom")
+          ) {
+            return;
+          }
+
+          fantomElement.remove();
+          locationUp
+            ? targetTask.before(fantomElement)
+            : targetTask.after(fantomElement);
+        }
+        
 };
 
-
 const onMouseUp = (e) => {
-    if (!draggedElement) return;
-
-    let insertionTarget = null;
-    for (let i = 0; i < tasks.children.length; i++) {
-        const child = tasks.children[i];
-        const boundingRect = child.getBoundingClientRect();
-        
-        
-        if (e.clientY < boundingRect.bottom) { 
-            insertionTarget = child;
-            break;
-        }
-    }
-
-    if (insertionTarget) {
-        tasks.insertBefore(draggedElement, insertionTarget);
-    } else {
-        
-        tasks.appendChild(draggedElement);
-    }
-
-    draggedElement.classList.remove('dragged');
-    draggedElement.style.cursor = 'auto';
-    draggedElement = null;
+    // console.log(e.target)
+    if (!fantomElement||!draggedElement) return;
+    
+    draggedElement.removeAttribute('style');
+    
+        fantomElement.before(draggedElement);
+        fantomElement.remove();
+        draggedElement.classList.remove('dragged');
+        draggedElement = null;
+        fantomElement = null;
+  
+    
     document.documentElement.removeEventListener('mousemove', onMouseMove);
     document.documentElement.removeEventListener('mouseup', onMouseUp);
 };
 
-// const onMouseUp = (e) => {
-//     mouseUrItem = e.target;
-//     console.log(draggedElement)
-//     draggedElement.style.cursor ='auto';
-//     tasks.appendChild(draggedElement)
-//     draggedElement.classList.remove('dragged');
-//     draggedElement = undefined;
-//     document.documentElement.removeEventListener('mousemove', onMouseMove);
-//     document.documentElement.removeEventListener('mouseup', onMouseUp);
-// };
-
-
 tasks.addEventListener('mousedown', (event) => {
     event.preventDefault();
-    console.log(event.target)
+    // console.log(event.target)
     
     draggedElement = event.target.closest('.task');
-    draggedElement.style.cursor = 'grabbing';
+    draggedElement.style.width = '522px';
+    draggedElement.style.height = '40px';
     if (!draggedElement) return;
+    
 
     if(event.target.classList.contains('button_delete_element')) 
         {draggedElement.remove();
@@ -181,66 +219,28 @@ tasks.addEventListener('mousedown', (event) => {
     initialOffsetY = event.clientY - rect.top;
 
     draggedElement.classList.add('dragged');
-    let fantomElement = document.createElement('div');
+    fantomElement = document.createElement('div');
     fantomElement.classList.add('fantom');
-    draggedElement.parentNode.insertBefore(fantomElement, draggedElement);
+    fantomElement.style.width = '522px';
+    fantomElement.style.height = '40px';
 
-
+    shift = {
+        x: event.clientX - draggedElement.getBoundingClientRect().left,
+        y: event.clientY - draggedElement.getBoundingClientRect().top + padding,
+      };
     
+    draggedElement.before(fantomElement);
+
     document.documentElement.addEventListener('mousemove', onMouseMove);
     document.documentElement.addEventListener('mouseup', onMouseUp);
 });
 
 
+function positionUp(elemTop, elemheight, clientY) {
+    if (clientY > elemTop && clientY < elemTop + elemheight / 2) {
+      return true;
+    }
+    return false;
+  }
+
 })
-
-
-
-
-        
-
-
-
-// // document.querySelectorAll('.column_container').forEach((col) => {
-//     column.addEventListener('dragstart', (event) => {
-//         event.dataTransfer.setData("text/plain", event.target.outerHTML);
-//         // console.log(event.target);
-//         event.dataTransfer.effectAllowed = 'move';
-//         originalElement = event.target;
-        
-//     });
-
-//     // let placeholder = document.createElement('div');
-//     // placeholder.classList.add('placeholder');
-
-//     // tasks.addEventListener('dragenter', () => {
-//     //     tasks.insertBefore(placeholder, null);
-//     // });
-
-//     // tasks.addEventListener('dragleave', () => {
-        
-//     //     placeholder.parentNode?.removeChild(placeholder);
-//     // });
-
-
-
-//     tasks.addEventListener('dragover', (e) => {
-//         e.preventDefault();
-//         e.dataTransfer.dropEffect = 'move';
-        
-
-//     });
-
-//     tasks.addEventListener('drop', (e) => {
-//         e.preventDefault();
-//         const draggedElHTML = e.dataTransfer.getData('text');
-//         const draggedEl = document.createElement('div');
-//         draggedEl.innerHTML = draggedElHTML;
-//         if (originalElement && originalElement.parentNode.contains(originalElement)) {
-//             originalElement.parentNode.removeChild(originalElement);
-//         }
-
-//     tasks.insertAdjacentElement('beforeend', draggedEl);
-
-//     originalElement = null;
-//     })})

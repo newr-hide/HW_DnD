@@ -1,4 +1,5 @@
 .idea
+dist
 Thumbs.db*
 .DS_Store*
 HELP.md

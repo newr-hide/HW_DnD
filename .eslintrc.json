@@ -1,0 +1,21 @@
+{
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "semi": ["error", "always"], // Обязательно ставить точку с запятой
+    "no-unused-vars": "off",      // Отключить предупреждение о неиспользованных переменных
+    "no-console": "off"           // Разрешить использование console.log
+  },
+  "ignorePatterns": [
+    "dist/",
+    "coverage/",
+    "docs/",
+    "*.json"
+  ]
+}

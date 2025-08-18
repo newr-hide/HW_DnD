@@ -10,12 +10,12 @@ module.exports = {
   },
   devServer: {
     static: {
-  directory: path.join(__dirname, 'dist') // Путь к статическим файлам
-},
+      directory: path.join(__dirname, 'dist'), // Путь к статическим файлам
+    },
     compress: true,
     port: 8080,
-    open: true,                                  // открывает браузер автоматически
-    hot: true                                    // горячая замена модулей (HMR)
+    open: true, // открывает браузер автоматически
+    hot: true, // горячая замена модулей (HMR)
   },
   module: {
     rules: [

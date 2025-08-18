@@ -146,8 +146,8 @@ body {
 }
 
 .fantom {
-    /* height: 40px;
-    min-width: 215px; */
+    height: 40px;
+    min-width: 215px;
     display: flex;
     justify-content: space-between;
     padding-left: 10px;

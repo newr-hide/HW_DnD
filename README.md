@@ -1,0 +1,1 @@
+[![Netology AHJ](https://github.com/newr-hide/HW_DnD/actions/workflows/web.yml/badge.svg)](https://github.com/newr-hide/HW_DnD/actions/workflows/web.yml)
